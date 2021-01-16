@@ -1,0 +1,1 @@
+# comparacao das estruturas escritas
