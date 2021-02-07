@@ -1,6 +1,6 @@
 def geraLinha(comprimento, valor = '.'):
     linha = []
-    for nummber in range(comprimento):
+    for _ in range(comprimento):
         linha.append(valor)
     return linha
 
@@ -14,15 +14,32 @@ def imprimeLinha(linha):
     linhaSoDeString = tranformarItemsEmString(linha)
     print(' '.join(linhaSoDeString))
 
+# TABULEIRO
+def geraTabuleiro(comprimento, altura, valor = '.'):
+    tabuleiro = []
+    for _ in range(altura):
+        tabuleiro.append(geraLinha(comprimento, valor))
+    return tabuleiro
 
+def imprimeTabuleiro(tabuleiro):
+    for linha in tabuleiro:
+        imprimeLinha(linha)
 
+# INICIAR
 
 # TESTES
 
-print(geraLinha(8))
-print(geraLinha(8, ' '))
-print(geraLinha(8, 0))
+def rodarTestes():
+    print(geraLinha(8))
+    print(geraLinha(8, ' '))
+    print(geraLinha(8, 0))
 
-imprimeLinha(geraLinha(8))
-imprimeLinha(geraLinha(8, ' '))
-imprimeLinha(geraLinha(8, 0))
+    imprimeLinha(geraLinha(8))
+    imprimeLinha(geraLinha(8, ' '))
+    imprimeLinha(geraLinha(8, 0))
+
+    imprimeTabuleiro(geraTabuleiro(10, 10))
+    imprimeTabuleiro(geraTabuleiro(10, 10, ' '))
+    imprimeTabuleiro(geraTabuleiro(10, 10, 0))
+
+rodarTestes()
