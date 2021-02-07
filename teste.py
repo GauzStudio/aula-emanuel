@@ -1,3 +1,5 @@
+import time
+
 def geraLinhaInicial(comprimento, valor = '.'):
     linha = []
     for _ in range(comprimento):
@@ -50,6 +52,28 @@ def geraTabuleiro(comprimento, altura, dicionario, valorBase = '.'):
         tabuleiro.append(linha)
     return tabuleiro
 
+instrucoes = {
+    "0,1": "#",
+    "3,1": "@",
+    "6,7": "*",
+}
+# JOGADOR
+def geraInstrucoes():
+    return {}
+
+def insereObjectoEmPosicao(instrucoes, objeto, x,y):
+    if(len(objeto) > 1):
+        raise Exception("O objeto não pode ter mais que um caractere.")
+
+    coordenada = "%d,%d" % (x,y)
+    instrucoes[coordenada] = objeto
+    return instrucoes
+
+def removeObjectoEmPosicao(instrucoes, x,y):
+    coordenada = "%d,%d" % (x,y)
+    instrucoes.pop(coordenada)
+    return instrucoes
+
 # INICIAR
 # dicionarioLinear = {
 #     "0": "#",
@@ -59,14 +83,43 @@ def geraTabuleiro(comprimento, altura, dicionario, valorBase = '.'):
 # linha = geraLinha(10, dicionarioLinear)
 # imprimeLinha(linha)
 
+# Utilidades
+def novoTurno():
+    time.sleep(1)
+    print('\n\n\n\n')
 
-dicionario = {
-    "0,1": "#",
-    "3,1": "@",
-    "6,7": "*",
-}
-tabuleiro = geraTabuleiro(10,10,dicionario)
+# turno 0
+instrucoes = geraInstrucoes()
+tabuleiro = geraTabuleiro(10,10,instrucoes)
 imprimeTabuleiro(tabuleiro)
+
+# turno 1
+novoTurno()
+insereObjectoEmPosicao(instrucoes, '@', 0,0)
+tabuleiro = geraTabuleiro(10,10,instrucoes)
+imprimeTabuleiro(tabuleiro)
+
+# turno 2
+novoTurno()
+removeObjectoEmPosicao(instrucoes, 0,0)
+insereObjectoEmPosicao(instrucoes, '@', 0,1)
+tabuleiro = geraTabuleiro(10,10,instrucoes)
+imprimeTabuleiro(tabuleiro)
+
+# turno 3
+novoTurno()
+removeObjectoEmPosicao(instrucoes, 0,1)
+insereObjectoEmPosicao(instrucoes, '@', 0,2)
+tabuleiro = geraTabuleiro(10,10,instrucoes)
+imprimeTabuleiro(tabuleiro)
+
+
+# Próxima Aula
+
+# -> Mover o Jogador
+# -> Melhorar o tabuleiro
+# -> Permitir que o Jogador faça jogadas
+# -> unificar o comportamento do turno em uma só função
 
 # TESTES
 
