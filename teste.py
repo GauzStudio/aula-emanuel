@@ -5,7 +5,10 @@ def geraLinha(comprimento, valor = '.'):
     return linha
 
 def imprimeLinha(linha):
-    print(' '.join(linha))
+    linhaSoDeString = []
+    for item in linha:
+        linhaSoDeString.append(str(item))
+    print(' '.join(linhaSoDeString))
 
 
 
@@ -18,4 +21,4 @@ print(geraLinha(8, 0))
 
 imprimeLinha(geraLinha(8))
 imprimeLinha(geraLinha(8, ' '))
-imprimeLinha(geraLinha(8, str(0)))
+imprimeLinha(geraLinha(8, 0))
