@@ -4,10 +4,14 @@ def geraLinha(comprimento, valor = '.'):
         linha.append(valor)
     return linha
 
-def imprimeLinha(linha):
+def tranformarItemsEmString(linha):
     linhaSoDeString = []
     for item in linha:
         linhaSoDeString.append(str(item))
+    return linhaSoDeString
+
+def imprimeLinha(linha):
+    linhaSoDeString = tranformarItemsEmString(linha)
     print(' '.join(linhaSoDeString))
 
 
