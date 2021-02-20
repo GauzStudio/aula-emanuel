@@ -42,18 +42,13 @@ def geraLinha(altura, comprimento, dicionario, valorBase = '.'):
         linha.append(valor)
     return linha
 
-def geraTabuleiro(comprimento, altura, dicionario, valorBase = '.'):
+def geraTabuleiro(dimensoes, dicionario, valorBase = '.'):
     tabuleiro = []
-    for y in range(altura):
-        linha = geraLinha(y, comprimento, dicionario, valorBase)
+    for y in range(dimensoes['y']):
+        linha = geraLinha(y, dimensoes['x'], dicionario, valorBase)
         tabuleiro.append(linha)
     return tabuleiro
 
-instrucoes = {
-    "0,0": "@",
-    "0,1": "#",
-    "6,7": "*",
-}
 
 # JOGADOR
 def geraInstrucoes():
@@ -79,6 +74,16 @@ def moveObjecto(instrucoes, de, para):
     insereObjectoEmPosicao(novasInstrucoes, objeto, para)
     return novasInstrucoes
 
+def geraDimencoes(comprimento, altura):
+    return {
+        'x': comprimento,
+        'y': altura,
+    }
+
+def mostraTabuleiro(dimensoes, instrucoes):
+    tabuleiro = geraTabuleiro(dimensoes,instrucoes)
+    imprimeTabuleiro(tabuleiro)
+
 # INICIAR
 # dicionarioLinear = {
 #     "0": "#",
@@ -93,28 +98,30 @@ def novoTurno():
     time.sleep(1)
     print('\n\n\n\n')
 
+
+instrucoesIniciais = {
+    "0,0": "@",
+    "0,1": "#",
+    "6,7": "*",
+}
 # turno 0
-geraTabuleiro(10,10,instrucoes)
-tabuleiro = geraTabuleiro(10,10,instrucoes)
-imprimeTabuleiro(tabuleiro)
+dimensoes = geraDimencoes(10,10)
+mostraTabuleiro(dimensoes, instrucoesIniciais)
 
 # turno 1
 novoTurno()
-instrucoesTurno1 = moveObjecto(instrucoes, "0,0", "0,1")
-tabuleiro = geraTabuleiro(10,10,instrucoesTurno1)
-imprimeTabuleiro(tabuleiro)
+instrucoesTurno1 = moveObjecto(instrucoesIniciais, "0,0", "0,1")
+mostraTabuleiro(dimensoes, instrucoesTurno1)
 
 # turno 2
 novoTurno()
 instrucoesTurno2 = moveObjecto(instrucoesTurno1, "0,1", "0,2")
-tabuleiro = geraTabuleiro(10,10,instrucoesTurno2)
-imprimeTabuleiro(tabuleiro)
+mostraTabuleiro(dimensoes, instrucoesTurno2)
 
 # turno 3
 novoTurno()
 instrucoesTurno3 = moveObjecto(instrucoesTurno2, "0,2", "0,3")
-tabuleiro = geraTabuleiro(10,10,instrucoesTurno3)
-imprimeTabuleiro(tabuleiro)
+mostraTabuleiro(dimensoes, instrucoesTurno3)
 
 
 # Próxima Aula
