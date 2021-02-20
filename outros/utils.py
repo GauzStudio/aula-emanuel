@@ -23,3 +23,11 @@ def falar(texto):
     engine.say(texto)
     engine.runAndWait()
     engine.stop()
+
+
+#
+# Numeros ordinais
+#
+from num2words import num2words
+def converteParaNumeroOrdinal(numero):
+    return num2words(numero, lang='pt-BR', to='ordinal')

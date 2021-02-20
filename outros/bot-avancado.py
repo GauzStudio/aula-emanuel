@@ -14,15 +14,14 @@ class Bot:
         return self.idade
 
 tob = Bot('tob')
-print(tob.dizerIdade())
 
 
 def more1():
-    print('more 1 year')
-    timer = threading.Timer(1, more1)
+    print('mais 4 anos de vida!')
+    timer = threading.Timer(4, more1)
     timer.start()
 
-timer = threading.Timer(1, more1)
+timer = threading.Timer(4, more1)
 timer.start()
 
 def loop():
@@ -31,3 +30,4 @@ def loop():
         print(stop)
         stop += 1
         time.sleep(1)
+loop()
