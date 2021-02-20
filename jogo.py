@@ -50,8 +50,8 @@ def geraTabuleiro(comprimento, altura, dicionario, valorBase = '.'):
     return tabuleiro
 
 instrucoes = {
+    "0,0": "@",
     "0,1": "#",
-    "3,1": "@",
     "6,7": "*",
 }
 
@@ -59,19 +59,25 @@ instrucoes = {
 def geraInstrucoes():
     return {}
 
-def insereObjectoEmPosicao(instrucoes, objeto, x,y):
+def insereObjectoEmPosicao(instrucoes, objeto, coordenada):
     # no momento, só aceita objectos com 1 caractere
     if(len(objeto) > 1):
         raise Exception("O objeto não pode ter mais que um caractere.")
 
-    coordenada = geraCoordenada(x,y)
     instrucoes[coordenada] = objeto
     return instrucoes
 
-def removeObjectoEmPosicao(instrucoes, x,y):
-    coordenada = geraCoordenada(x,y)
-    instrucoes.pop(coordenada)
-    return instrucoes
+def removeObjectoEmPosicao(instrucoes, coordenada):
+    objeto = instrucoes[coordenada]
+
+    novasInstrucoes = {k: v for k, v in instrucoes.items()}
+    novasInstrucoes.pop(coordenada)
+    return novasInstrucoes, objeto
+
+def moveObjecto(instrucoes, de, para):
+    novasInstrucoes, objeto = removeObjectoEmPosicao(instrucoes, de)
+    insereObjectoEmPosicao(novasInstrucoes, objeto, para)
+    return novasInstrucoes
 
 # INICIAR
 # dicionarioLinear = {
@@ -88,28 +94,26 @@ def novoTurno():
     print('\n\n\n\n')
 
 # turno 0
-instrucoes = geraInstrucoes()
+geraTabuleiro(10,10,instrucoes)
 tabuleiro = geraTabuleiro(10,10,instrucoes)
 imprimeTabuleiro(tabuleiro)
 
 # turno 1
 novoTurno()
-insereObjectoEmPosicao(instrucoes, '@', 0,0)
-tabuleiro = geraTabuleiro(10,10,instrucoes)
+instrucoesTurno1 = moveObjecto(instrucoes, "0,0", "0,1")
+tabuleiro = geraTabuleiro(10,10,instrucoesTurno1)
 imprimeTabuleiro(tabuleiro)
 
 # turno 2
 novoTurno()
-removeObjectoEmPosicao(instrucoes, 0,0)
-insereObjectoEmPosicao(instrucoes, '@', 0,1)
-tabuleiro = geraTabuleiro(10,10,instrucoes)
+instrucoesTurno2 = moveObjecto(instrucoesTurno1, "0,1", "0,2")
+tabuleiro = geraTabuleiro(10,10,instrucoesTurno2)
 imprimeTabuleiro(tabuleiro)
 
 # turno 3
 novoTurno()
-removeObjectoEmPosicao(instrucoes, 0,1)
-insereObjectoEmPosicao(instrucoes, '@', 0,2)
-tabuleiro = geraTabuleiro(10,10,instrucoes)
+instrucoesTurno3 = moveObjecto(instrucoesTurno2, "0,2", "0,3")
+tabuleiro = geraTabuleiro(10,10,instrucoesTurno3)
 imprimeTabuleiro(tabuleiro)
 
 
