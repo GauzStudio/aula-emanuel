@@ -140,11 +140,12 @@ class ObjetoDoMundo:
         self.y = y
 
     #id para classificar objetos no mundo
-    id: Optional[str]
 
     x:Optional[int]
     y:Optional[int]
     objeto: Union[Heroi, Bandido]
+    
+    id: str = '0'
 
 """
 O Mundo é equivalente as instruções.
@@ -184,10 +185,23 @@ class Mundo:
 
         return objeto
 
-    def removeObjeto(self, objeto:ObjetoDoMundo):
+    # def removeObjeto(self, objeto:ObjetoDoMundo):
+    #     item, index = self.getItemPorId(objeto)
+    #     self.items.pop(index)
+
+    def getItemPorId(self, objeto:ObjetoDoMundo):
         for index, item in enumerate(self.items):
             if item.id == objeto.id:
-                self.items.pop(index)
+                return item
+                
+    def moveObjeto(self, objeto:ObjetoDoMundo, x:int, y:int):
+        objetoAchado = self.getItemPorId(objeto)
+        if objetoAchado == None:
+            return False
+        objetoAchado.x = x
+        objetoAchado.y = y
+
+        return True
 
     def geraInstrucoes(self):
         instrucoes = {}
@@ -216,7 +230,7 @@ class Mundo:
 
 ### INICIALIZA
 mundo = Mundo(10,10)
-mundo.adicionaObjeto(ObjetoDoMundo(Heroi('Emanuel'), 0,0))
+heroi = mundo.adicionaObjeto(ObjetoDoMundo(Heroi('Emanuel'), 0,0))
 mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Cid'), 2,2))
 mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Raton'), 4,6))
 instrucoes = mundo.geraInstrucoes()
@@ -224,8 +238,12 @@ instrucoes = mundo.geraInstrucoes()
 # turno 0
 # dimensoes = geraDimensoes(10, 10)
 # inicializaPlayer(instrucoes, dimensoes)
-profundidade = mundo.profundidade()
-novoTurno(geraDimensoes(mundo.comprimento(), profundidade), instrucoes)
+dimensoes = geraDimensoes(mundo.comprimento(), mundo.profundidade())
+
+novoTurno(dimensoes, instrucoes)
+mundo.moveObjeto(heroi, 0,1)
+instrucoes = mundo.geraInstrucoes()
+novoTurno(dimensoes, instrucoes)
 
 for item in mundo.getItens():
     print(item.objeto.simbolo, ' => ', item.objeto.nome)
