@@ -28,11 +28,15 @@ def imprimeTabuleiro(tabuleiro):
         imprimeLinha(linha)
 
 # JOGO
-def geraLinha(comprimento, dicionario, valorBase = '.'):
+def geraCoordenada(x,y):
+    return "%d,%d" % (x,y)
+
+def geraLinha(altura, comprimento, dicionario, valorBase = '.'):
     linha = []
     for numero in range(comprimento):
         try:
-            valor = dicionario[str(numero)]
+            coordenada = geraCoordenada(altura,numero)
+            valor = dicionario[coordenada]
         except(KeyError):
             valor = valorBase
         linha.append(valor)
@@ -41,14 +45,7 @@ def geraLinha(comprimento, dicionario, valorBase = '.'):
 def geraTabuleiro(comprimento, altura, dicionario, valorBase = '.'):
     tabuleiro = []
     for y in range(altura):
-        linha = []
-        for x in range(comprimento):
-            try:
-                coordenada = "%d,%d" % (x,y)
-                valor = dicionario[coordenada]
-            except(KeyError):
-                valor = valorBase
-            linha.append(valor)
+        linha = geraLinha(y, comprimento, dicionario, valorBase)
         tabuleiro.append(linha)
     return tabuleiro
 
@@ -57,20 +54,22 @@ instrucoes = {
     "3,1": "@",
     "6,7": "*",
 }
+
 # JOGADOR
 def geraInstrucoes():
     return {}
 
 def insereObjectoEmPosicao(instrucoes, objeto, x,y):
+    # no momento, só aceita objectos com 1 caractere
     if(len(objeto) > 1):
         raise Exception("O objeto não pode ter mais que um caractere.")
 
-    coordenada = "%d,%d" % (x,y)
+    coordenada = geraCoordenada(x,y)
     instrucoes[coordenada] = objeto
     return instrucoes
 
 def removeObjectoEmPosicao(instrucoes, x,y):
-    coordenada = "%d,%d" % (x,y)
+    coordenada = geraCoordenada(x,y)
     instrucoes.pop(coordenada)
     return instrucoes
 
