@@ -3,6 +3,11 @@ import random
 from dataclasses import dataclass
 from typing import List, Optional, Union
 
+import msvcrt
+import os
+def clear(): return os.system('cls')
+
+
 def geraLinhaInicial(comprimento, valor='.'):
     linha = []
     for _ in range(comprimento):
@@ -98,6 +103,7 @@ def geraDimensoes(comprimento, altura):
         'y': altura,
     }
 
+
 def mostraTabuleiro(dimensoes, instrucoes):
     tabuleiro = geraTabuleiro(dimensoes, instrucoes)
     imprimeTabuleiro(tabuleiro)
@@ -114,11 +120,14 @@ def mostraTabuleiro(dimensoes, instrucoes):
 # Utilidades
 
 
-def novoTurno(dimensoes, instrucoes):
+def novoTurno(dimensoes, instrucoes, mundo):
     # finge que espera input e limpa a tela
-    time.sleep(1)
-    print('\n\n\n\n')
+    clear()
+    for item in mundo.getItens():
+        print(item.objeto.simbolo, ' => ', item.objeto.nome)
+    print('\n')
     mostraTabuleiro(dimensoes, instrucoes)
+
 
 @dataclass
 class Heroi:
@@ -126,11 +135,13 @@ class Heroi:
         self.nome = nome
     simbolo = '@'
 
+
 @dataclass
 class Bandido:
-    def __init__(self, nome = 'Bandido'):
+    def __init__(self, nome='Bandido'):
         self.nome = nome
     simbolo = '%'
+
 
 @dataclass
 class ObjetoDoMundo:
@@ -139,13 +150,14 @@ class ObjetoDoMundo:
         self.x = x
         self.y = y
 
-    #id para classificar objetos no mundo
+    # id para classificar objetos no mundo
 
-    x:Optional[int]
-    y:Optional[int]
+    x: Optional[int]
+    y: Optional[int]
     objeto: Union[Heroi, Bandido]
-    
+
     id: str = '0'
+
 
 """
 O Mundo é equivalente as instruções.
@@ -157,28 +169,30 @@ Essa lista contém classes do tipo: ObjetoDoMundo
 maxX é equivalente à dimensoes['x']
 maxY é equivalente à dimensoes['y']
 """
+
+
 class Mundo:
 
-    #dimensões
-    maxX:int # comprimento
-    maxY:int # altura
+    # dimensões
+    maxX: int  # comprimento
+    maxY: int  # altura
 
-    #items no mundo
-    items:List[ObjetoDoMundo] = []
+    # items no mundo
+    items: List[ObjetoDoMundo] = []
 
     def __init__(self, x, y):
         self.maxX = x
         self.maxY = y
-    
+
     def comprimento(self):
         return self.maxX
 
     def profundidade(self):
         return self.maxY
 
-    def adicionaObjeto(self, objeto:ObjetoDoMundo):
+    def adicionaObjeto(self, objeto: ObjetoDoMundo):
         # gera id aleatório
-        id = str(random.randint(1,1000000))
+        id = str(random.randint(1, 1000000))
 
         objeto.id = id
         self.items.append(objeto)
@@ -189,12 +203,12 @@ class Mundo:
     #     item, index = self.getItemPorId(objeto)
     #     self.items.pop(index)
 
-    def getItemPorId(self, objeto:ObjetoDoMundo):
+    def getItemPorId(self, objeto: ObjetoDoMundo):
         for index, item in enumerate(self.items):
             if item.id == objeto.id:
                 return item
-                
-    def moveObjeto(self, objeto:ObjetoDoMundo, x:int, y:int):
+
+    def moveObjeto(self, objeto: ObjetoDoMundo, x: int, y: int):
         objetoAchado = self.getItemPorId(objeto)
         if objetoAchado == None:
             return False
@@ -213,6 +227,47 @@ class Mundo:
         return self.items
 
 
+translateKeys = {
+    '1': [-1, 1],
+    '2': [0, 1],
+    '3': [1, 1],
+    '4': [-1, 0],
+    '5': [0, 0],
+    '6': [1, 0],
+    '7': [-1, -1],
+    '8': [0, -1],
+    '9': [1, -1],
+    'w': [0, 1],
+    'd': [1, 0],
+    'a': [-1, 0],
+    's': [0, -1],
+}
+
+
+def getDirection(key):
+    try:
+        direction = translateKeys[key]
+        return direction
+    except(KeyError):
+        return
+
+
+class Game:
+    mundo: Mundo
+
+    def __init__(self, mundo):
+        self.mundo = mundo
+
+    def turno(self, heroi):
+        char = msvcrt.getwch()
+        direction = getDirection(char)
+        if not direction:
+            print('Esse caminho não vai para lugar nenhum.')
+            return
+
+        self.mundo.moveObjeto(
+            heroi, heroi.x + direction[1], heroi.y + direction[0])
+
 
 # instrucoesIniciais = {
 #     "0,1": "#",
@@ -228,11 +283,12 @@ class Mundo:
 # def inicializaPlayer(instrucoes, dimensoes):
 #     insereObjeto(instrucoes, 0, dimensoes['x'] - 1, '@')
 
-### INICIALIZA
-mundo = Mundo(10,10)
-heroi = mundo.adicionaObjeto(ObjetoDoMundo(Heroi('Emanuel'), 0,0))
-mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Cid'), 2,2))
-mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Raton'), 4,6))
+# INICIALIZA
+mundo = Mundo(10, 10)
+heroi = mundo.adicionaObjeto(ObjetoDoMundo(Heroi('Emanuel'), 0, 0))
+mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Cid'), 2, 2))
+mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Raton'), 4, 6))
+game = Game(mundo)
 instrucoes = mundo.geraInstrucoes()
 
 # turno 0
@@ -240,13 +296,14 @@ instrucoes = mundo.geraInstrucoes()
 # inicializaPlayer(instrucoes, dimensoes)
 dimensoes = geraDimensoes(mundo.comprimento(), mundo.profundidade())
 
-novoTurno(dimensoes, instrucoes)
-mundo.moveObjeto(heroi, 0,1)
-instrucoes = mundo.geraInstrucoes()
-novoTurno(dimensoes, instrucoes)
+# novoTurno(dimensoes, instrucoes)
+# mundo.moveObjeto(heroi, 0,1)
 
-for item in mundo.getItens():
-    print(item.objeto.simbolo, ' => ', item.objeto.nome)
+for _ in range(30):
+    game.turno(heroi)
+    instrucoes = mundo.geraInstrucoes()
+    novoTurno(dimensoes, instrucoes, mundo)
+
 
 # # turno 1
 # instrucoesTurno1 = moveObjecto(instrucoesIniciais, "0,0", "0,1")
