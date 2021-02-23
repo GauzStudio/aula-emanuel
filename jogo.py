@@ -6,7 +6,8 @@ from typing import List, Optional, Union
 import msvcrt
 import os
 def clear(): return os.system('cls')
-
+# retorna o valor ou entre um intervalo max, min. Ex. se for 11 e o máximo 10, vai retornar 10
+def clamp(n, smallest, largest): return max(smallest, min(n, largest))
 
 def geraLinhaInicial(comprimento, valor='.'):
     linha = []
@@ -199,23 +200,46 @@ class Mundo:
 
         return objeto
 
-    # def removeObjeto(self, objeto:ObjetoDoMundo):
-    #     item, index = self.getItemPorId(objeto)
-    #     self.items.pop(index)
+    def removeObjeto(self, objeto:ObjetoDoMundo):
+        _, index = self.getItemPorId(objeto) #type: ignore
+        if index:
+            self.items.pop(index)
 
     def getItemPorId(self, objeto: ObjetoDoMundo):
         for index, item in enumerate(self.items):
             if item.id == objeto.id:
-                return item
+                return item, index
+        return None, None
 
     def moveObjeto(self, objeto: ObjetoDoMundo, x: int, y: int):
-        objetoAchado = self.getItemPorId(objeto)
+        objetoAchado, _ = self.getItemPorId(objeto)
         if objetoAchado == None:
             return False
+        
+        #checar se já existem items no mesmo lugar
+        itemNaPosicao = self.getObjetosEmPosicao(x, y)
+        if len(itemNaPosicao) > 0:
+            self.onContatoNaMesmaPosicao(x,y, objeto)
         objetoAchado.x = x
         objetoAchado.y = y
 
         return True
+    def onContatoNaMesmaPosicao(self, x: int, y: int, objeto: ObjetoDoMundo):
+        # a principio só temos o heroi
+        items = self.getObjetosEmPosicao(x, y)
+        for item in items:
+            # se for um bandido
+            if item.objeto.simbolo == '%':
+                self.removeObjeto(item)
+        
+        return True # False se não puder mover
+        
+    def getObjetosEmPosicao(self, x:int, y:int):
+        items = []
+        for item in self.items:
+            if item.x == x and item.y == y:
+                items.append(item)
+        return items
 
     def geraInstrucoes(self):
         instrucoes = {}
@@ -260,6 +284,9 @@ class Game:
 
     def turno(self, heroi):
         char = msvcrt.getwch()
+        if char == '0':
+            print('adios!!!')
+            exit()
         direction = getDirection(char)
         if not direction:
             print('Esse caminho não vai para lugar nenhum.')
@@ -289,7 +316,7 @@ heroi = mundo.adicionaObjeto(ObjetoDoMundo(Heroi('Emanuel'), 0, 0))
 mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Cid'), 2, 2))
 mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Raton'), 4, 6))
 game = Game(mundo)
-instrucoes = mundo.geraInstrucoes()
+# instrucoes = mundo.geraInstrucoes()
 
 # turno 0
 # dimensoes = geraDimensoes(10, 10)
@@ -299,8 +326,10 @@ dimensoes = geraDimensoes(mundo.comprimento(), mundo.profundidade())
 # novoTurno(dimensoes, instrucoes)
 # mundo.moveObjeto(heroi, 0,1)
 
-for _ in range(30):
-    game.turno(heroi)
+for turno in range(30):
+    # turno inicial
+    if turno != 0:
+        game.turno(heroi)
     instrucoes = mundo.geraInstrucoes()
     novoTurno(dimensoes, instrucoes, mundo)
 
