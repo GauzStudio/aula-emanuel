@@ -122,6 +122,11 @@ for turno in range(30):
         game.turno(heroi)
     instrucoes = mundo.geraInstrucoes()
     novoTurno(dimensoes, instrucoes, mundo)
+    
+    # ver se o player venceu
+    if len(mundo.items) == 1:
+        print("Parabéns, voce venceu!")
+        exit()
 
 # Próxima Aula
 
