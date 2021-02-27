@@ -1,5 +1,5 @@
 from funcoes import geraCoordenada
-import random
+import sys, random
 from dataclasses import dataclass
 from typing import List, Optional, Union
 import msvcrt
@@ -163,7 +163,7 @@ class Game:
         # se for '0' sai do jogo
         if char == '0':
             print('adios!!!')
-            exit()
+            sys.exit()
         
         # procura vetor de movimento
         direction = getDirection(char)

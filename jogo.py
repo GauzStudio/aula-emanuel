@@ -1,6 +1,8 @@
 from objetos import Bandido, Game, Heroi, Mundo, ObjetoDoMundo
 from funcoes import geraCoordenada
 import os
+import sys
+
 def clear(): return os.system('cls')
 
 def geraLinhaInicial(comprimento, valor='.'):
@@ -126,7 +128,7 @@ for turno in range(30):
     # ver se o player venceu
     if len(mundo.items) == 1:
         print("Parabéns, voce venceu!")
-        exit()
+        sys.exit()
 
 # Próxima Aula
 
