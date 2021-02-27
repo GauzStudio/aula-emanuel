@@ -148,16 +148,6 @@ def getDirection(key):
         return direction
     except(KeyError):
         return
-
-# def insereObjeto(instrucoes, min, max, objeto):
-#     instrucoes[geraCoordenada(random.randint(
-#         min, max), random.randint(min, max))] = objeto
-
-
-# def inicializaPlayer(instrucoes, dimensoes):
-#     insereObjeto(instrucoes, 0, dimensoes['x'] - 1, '@')
-
-
 class Game:
     mundo: Mundo
 
