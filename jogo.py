@@ -2,8 +2,6 @@ from objetos import Bandido, Game, Heroi, Mundo, ObjetoDoMundo
 from funcoes import geraCoordenada
 import os
 def clear(): return os.system('cls')
-# retorna o valor ou entre um intervalo max, min. Ex. se for 11 e o máximo 10, vai retornar 10
-def clamp(n, smallest, largest): return max(smallest, min(n, largest))
 
 def geraLinhaInicial(comprimento, valor='.'):
     linha = []

@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from typing import List, Optional, Union
 import msvcrt
 
+# retorna o valor ou entre um intervalo max, min. Ex. se for 11 e o máximo 10, vai retornar 10
+def clamp(n, smallest, largest): return max(smallest, min(n, largest))
 @dataclass
 class Heroi:
     def __init__(self, nome):
@@ -155,17 +157,33 @@ class Game:
         self.mundo = mundo
 
     def turno(self, heroi):
+        # recebe o input 
         char = msvcrt.getwch()
+        
+        # se for '0' sai do jogo
         if char == '0':
             print('adios!!!')
             exit()
+        
+        # procura vetor de movimento
         direction = getDirection(char)
+
+        # se não tiver vetor de movimento (direção) retorna
         if not direction:
             print('Esse caminho não vai para lugar nenhum.')
             return
 
+        # soma a posição anterior mais o vetor de movimento 'x' e 'y'
+        paraX = heroi.x + direction[0]
+        paraY = heroi.y + direction[1]
+
+        # checa se o para{x ou y} é maior que o comprimento e profundidade do mundo
+
+        paraX = clamp(paraX, 0, self.mundo.comprimento() -1)
+        paraY = clamp(paraY, 0, self.mundo.profundidade() -1)
+
         self.mundo.moveObjeto(
-            heroi, heroi.x + direction[0], heroi.y + direction[1])
+            heroi, paraX, paraY)
 
 class Screen:
     def __init__(self, comprimento, largura):
