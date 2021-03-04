@@ -3,7 +3,9 @@ from funcoes import geraCoordenada
 import os
 import sys
 
+
 def clear(): return os.system('cls')
+
 
 def geraLinhaInicial(comprimento, valor='.'):
     linha = []
@@ -65,8 +67,6 @@ def geraInstrucoes():
     return {}
 
 
-
-
 def geraDimensoes(comprimento, altura):
     return {
         'x': comprimento,
@@ -76,7 +76,7 @@ def geraDimensoes(comprimento, altura):
 # def geraInstrucoesASeremImpressas(instrucoes, dimensoes, offsetX = 0, offsetY = 0):
 #     newDictionary = {}
 #     for k,v in instrucoes.items():
-        
+
 #         x,y = k.split(',')
 #         x = int(x)
 #         y = int(y)
@@ -84,6 +84,7 @@ def geraDimensoes(comprimento, altura):
 #         if x >= offsetX and x <= dimensoes['x'] + offsetX and y >= offsetY and y <= dimensoes['y'] + offsetY:
 #             newDictionary[geraCoordenada(x + offsetX, y + offsetY)] = v
 #     return newDictionary
+
 
 def mostraTabuleiro(dimensoes, instrucoes):
     # instrucoesASeremImpressas = geraInstrucoesASeremImpressas(instrucoes, dimensoes, offsetX, offsetY)
@@ -93,7 +94,7 @@ def mostraTabuleiro(dimensoes, instrucoes):
 # Utilidades
 
 
-def novoTurno(dimensoes, instrucoes, mundo:Mundo):
+def novoTurno(dimensoes, instrucoes, mundo: Mundo):
     # finge que espera input e limpa a tela
     clear()
     for item in mundo.getItens():
@@ -118,18 +119,20 @@ game = Game(mundo)
 # inicializaPlayer(instrucoes, dimensoes)
 dimensoes = geraDimensoes(mundo.comprimento(), mundo.profundidade())
 
-for turno in range(30):
+turno = 0
+sair = False
+while not sair:
     # turno inicial
     if turno != 0:
         game.turno(heroi)
     instrucoes = mundo.geraInstrucoes()
     novoTurno(dimensoes, instrucoes, mundo)
-    
+
     # ver se o player venceu
     if len(mundo.items) == 1:
         print("Parabéns, voce venceu!")
         sys.exit()
-
+    turno += 1
 # Próxima Aula
 
 # -> Limitar movimento para tamanho do tabuleiro
