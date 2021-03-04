@@ -1,23 +1,36 @@
 from funcoes import geraCoordenada
-import sys, random
+import sys
+import random
 from dataclasses import dataclass
 from typing import List, Optional, Union
 import msvcrt
 
 # retorna o valor ou entre um intervalo max, min. Ex. se for 11 e o máximo 10, vai retornar 10
+
+
 def clamp(n, smallest, largest): return max(smallest, min(n, largest))
+
+
+graficos = {
+    'simbolos': {
+        'heroi': '@',
+        'bandido': '%',
+    }
+}
+
+
 @dataclass
 class Heroi:
     def __init__(self, nome):
         self.nome = nome
-    simbolo = '@'
+    simbolo = graficos['simbolos']['heroi']
 
 
 @dataclass
 class Bandido:
     def __init__(self, nome='Bandido'):
         self.nome = nome
-    simbolo = '%'
+    simbolo = graficos['simbolos']['bandido']
 
 
 @dataclass
@@ -76,8 +89,8 @@ class Mundo:
 
         return objeto
 
-    def removeObjeto(self, objeto:ObjetoDoMundo):
-        _, index = self.getItemPorId(objeto) #type: ignore
+    def removeObjeto(self, objeto: ObjetoDoMundo):
+        _, index = self.getItemPorId(objeto)  # type: ignore
         if index:
             self.items.pop(index)
 
@@ -87,30 +100,37 @@ class Mundo:
                 return item, index
         return None, None
 
+    def getItemPorSimbolo(self, simbolo):
+        items = []
+        for _, item in enumerate(self.items):
+            if item.objeto.simbolo == simbolo:
+                items.append(item)
+        return items
+
     def moveObjeto(self, objeto: ObjetoDoMundo, x: int, y: int):
         objetoAchado, _ = self.getItemPorId(objeto)
         if objetoAchado == None:
             return False
-        
-        #checar se já existem items no mesmo lugar
+
+        # checar se já existem items no mesmo lugar
         itemNaPosicao = self.getObjetosEmPosicao(x, y)
         if len(itemNaPosicao) > 0:
-            self.onContatoNaMesmaPosicao(x,y, objeto)
+            self.onContatoNaMesmaPosicao(x, y, objeto)
         objetoAchado.x = x
         objetoAchado.y = y
 
         return True
+
     def onContatoNaMesmaPosicao(self, x: int, y: int, objeto: ObjetoDoMundo):
         # a principio só temos o heroi
         items = self.getObjetosEmPosicao(x, y)
         for item in items:
-            # se for um bandido
-            if item.objeto.simbolo == '%':
+            if item.id != objeto.id:
                 self.removeObjeto(item)
-        
-        return True # False se não puder mover
-        
-    def getObjetosEmPosicao(self, x:int, y:int):
+
+        return True  # False se não puder mover
+
+    def getObjetosEmPosicao(self, x: int, y: int):
         items = []
         for item in self.items:
             if item.x == x and item.y == y:
@@ -150,46 +170,67 @@ def getDirection(key):
         return direction
     except(KeyError):
         return
+
+
 class Game:
     mundo: Mundo
 
     def __init__(self, mundo):
         self.mundo = mundo
 
+    def getBandidos(self):
+        return self.mundo.getItemPorSimbolo(graficos['simbolos']['bandido'])
+
+    def moveObjeto(self, objeto, x, y):
+
+        # checa se está querendo continuar parado
+        if x == 0 and y == 0:
+            return
+
+        # soma a posição anterior mais o vetor de movimento 'x' e 'y'
+        paraX = objeto.x + x
+        paraY = objeto.y + y
+
+        # checa se movimento já está impedido
+        if paraX == self.mundo.comprimento() - 1 and paraY == self.mundo.profundidade() - 1:
+            return
+
+        # checa se o para{x ou y} é maior que o comprimento e profundidade do mundo
+
+        paraX = clamp(paraX, 0, self.mundo.comprimento() - 1)
+        paraY = clamp(paraY, 0, self.mundo.profundidade() - 1)
+
+        self.mundo.moveObjeto(
+            objeto, paraX, paraY)
+
     def turno(self, heroi):
-        # recebe o input 
+        # recebe o input
         char = msvcrt.getwch()
-        
+
         # se for '0' sai do jogo
         if char == '0':
             print('adios!!!')
             sys.exit()
-        
+
         # procura vetor de movimento
         direction = getDirection(char)
+
+        self.moveObjeto(heroi, direction[0], direction[1])
+        for bandido in self.getBandidos():
+            self.moveObjeto(bandido, random.randint(-3, 3),
+                            random.randint(-3, 3))
 
         # se não tiver vetor de movimento (direção) retorna
         if not direction:
             print('Esse caminho não vai para lugar nenhum.')
             return
 
-        # soma a posição anterior mais o vetor de movimento 'x' e 'y'
-        paraX = heroi.x + direction[0]
-        paraY = heroi.y + direction[1]
-
-        # checa se o para{x ou y} é maior que o comprimento e profundidade do mundo
-
-        paraX = clamp(paraX, 0, self.mundo.comprimento() -1)
-        paraY = clamp(paraY, 0, self.mundo.profundidade() -1)
-
-        self.mundo.moveObjeto(
-            heroi, paraX, paraY)
 
 class Screen:
     def __init__(self, comprimento, largura):
         self.comprimento = comprimento
         self.largura = largura
-    
+
     def getComprimento(self):
         return self.comprimento
 
