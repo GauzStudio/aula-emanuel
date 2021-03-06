@@ -107,8 +107,8 @@ def novoTurno(dimensoes, instrucoes, mundo: Mundo):
 
 
 # INICIALIZA
-mundo = Mundo(15, 15)
-heroi = mundo.adicionaObjeto(ObjetoDoMundo(Heroi('Emanuel'), 0, 0))
+mundo = Mundo(5, 5)
+mundo.adicionaObjeto(ObjetoDoMundo(Heroi('Emanuel'), 0, 0))
 mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Cid'), 2, 2))
 mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Raton'), 4, 6))
 game = Game(mundo)
@@ -124,15 +124,18 @@ sair = False
 while not sair:
     # turno inicial
     if turno != 0:
-        game.turno(heroi)
+        game.turno()
     instrucoes = mundo.geraInstrucoes()
     novoTurno(dimensoes, instrucoes, mundo)
 
     # ver se o player venceu
     if len(mundo.items) == 1:
         print("Parabéns, voce venceu!")
-        sys.exit()
+        sair = True
     turno += 1
+
+# sai do jogo
+sys.exit()
 # Próxima Aula
 
 # -> Limitar movimento para tamanho do tabuleiro

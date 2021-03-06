@@ -131,7 +131,7 @@ class Mundo:
         return True  # False se não puder mover
 
     def getObjetosEmPosicao(self, x: int, y: int):
-        items = []
+        items: List[ObjetoDoMundo] = []
         for item in self.items:
             if item.x == x and item.y == y:
                 items.append(item)
@@ -203,7 +203,7 @@ class Game:
         self.mundo.moveObjeto(
             objeto, paraX, paraY)
 
-    def turno(self, heroi):
+    def turno(self):
         # recebe o input
         char = msvcrt.getwch()
 
@@ -214,8 +214,10 @@ class Game:
 
         # procura vetor de movimento
         direction = getDirection(char)
-
+        lista = self.mundo.getItemPorSimbolo(graficos['simbolos']['heroi'])
+        heroi = lista[0]
         self.moveObjeto(heroi, direction[0], direction[1])
+
         for bandido in self.getBandidos():
             self.moveObjeto(bandido, random.randint(-3, 3),
                             random.randint(-3, 3))
