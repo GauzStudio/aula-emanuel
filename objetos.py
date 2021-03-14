@@ -1,36 +1,33 @@
-from funcoes import geraCoordenada
 import sys
+import os
 import random
 from dataclasses import dataclass
 from typing import List, Optional, Union
 import msvcrt
 
+import utilidades
+import graficos
+import interface
+
 # retorna o valor ou entre um intervalo max, min. Ex. se for 11 e o máximo 10, vai retornar 10
 
 
 def clamp(n, smallest, largest): return max(smallest, min(n, largest))
-
-
-graficos = {
-    'simbolos': {
-        'heroi': '@',
-        'bandido': '%',
-    }
-}
+def clear(): return os.system('cls')
 
 
 @dataclass
 class Heroi:
     def __init__(self, nome):
         self.nome = nome
-    simbolo = graficos['simbolos']['heroi']
+    simbolo = graficos.graficos['simbolos']['heroi']
 
 
 @dataclass
 class Bandido:
     def __init__(self, nome='Bandido'):
         self.nome = nome
-    simbolo = graficos['simbolos']['bandido']
+    simbolo = graficos.graficos['simbolos']['bandido']
 
 
 @dataclass
@@ -139,36 +136,20 @@ class Mundo:
     def geraInstrucoes(self):
         instrucoes = {}
         for item in self.items:
-            instrucoes[geraCoordenada(item.x, item.y)] = item.objeto.simbolo
+            instrucoes[utilidades.geraCoordenada(
+                item.x, item.y)] = item.objeto.simbolo
         return instrucoes
 
     def getItens(self):
         return self.items
 
 
-translateKeys = {
-    '1': [-1, 1],
-    '2': [0, 1],
-    '3': [1, 1],
-    '4': [-1, 0],
-    '5': [0, 0],
-    '6': [1, 0],
-    '7': [-1, -1],
-    '8': [0, -1],
-    '9': [1, -1],
-    'w': [0, -1],
-    'd': [1, 0],
-    'a': [-1, 0],
-    's': [0, 1],
-}
-
-
 def getDirection(key):
     try:
-        direction = translateKeys[key]
+        direction = interface.controle[key]
         return direction
     except(KeyError):
-        return
+        return None
 
 
 class Game:
@@ -178,7 +159,7 @@ class Game:
         self.mundo = mundo
 
     def getBandidos(self):
-        return self.mundo.getItemPorSimbolo(graficos['simbolos']['bandido'])
+        return self.mundo.getItemPorSimbolo(graficos.graficos['simbolos']['bandido'])
 
     def moveObjeto(self, objeto, x, y):
 
@@ -202,29 +183,79 @@ class Game:
         self.mundo.moveObjeto(
             objeto, paraX, paraY)
 
-    def turno(self):
+    def pegaOInputDoTurno(self):
         # recebe o input
+        # recebe uma caracter (ex. a, s, k, 1, v) sem o usuário precisar dar 'Enter'
         char = msvcrt.getwch()
 
         # se for '0' sai do jogo
         if char == '0':
-            print('adios!!!')
+            print('Adios!!!')
             sys.exit()
+        return char
+
+    def turnoLogico(self):
+        char = self.pegaOInputDoTurno()
 
         # procura vetor de movimento
         direction = getDirection(char)
-        lista = self.mundo.getItemPorSimbolo(graficos['simbolos']['heroi'])
-        heroi = lista[0]
-        self.moveObjeto(heroi, direction[0], direction[1])
-
-        for bandido in self.getBandidos():
-            self.moveObjeto(bandido, random.randint(-3, 3),
-                            random.randint(-3, 3))
 
         # se não tiver vetor de movimento (direção) retorna
-        if not direction:
+        if direction == None:
             print('Esse caminho não vai para lugar nenhum.')
             return
+
+        # roda os turnos dos personagens
+
+        # pega o herois (no caso só tem um)
+        lista = self.mundo.getItemPorSimbolo(
+            graficos.graficos['simbolos']['heroi'])
+        heroi = lista[0]
+
+        # move o herói baseado no movimento escolhido
+        self.moveObjeto(heroi, direction[0], direction[1])
+
+        # pega os outros personagens
+        for bandido in self.getBandidos():
+
+            # por enquanto eles se movem aleatóriamente
+            self.moveObjeto(bandido, random.randint(-1, 1),
+                            random.randint(-1, 1))
+
+    def turnoTotal(self, turno: int):
+        # se for o turno inicial gera o mapa antes do primeiro movimento
+        if turno != 0:
+            # turno lógico
+            self.turnoLogico()
+
+        # aumenta o número do turno
+        turno += 1
+
+        # gera as primeiras instruções
+        instrucoes = self.mundo.geraInstrucoes()
+
+        # gera as dimensões do jogo
+        dimensoes = utilidades.geraDimensoes(
+            self.mundo.comprimento(), self.mundo.profundidade())
+        self.turnoGrafico(dimensoes, instrucoes, self.mundo)
+
+        # ver se o player venceu
+        if len(self.mundo.items) == 1:
+            print("Parabéns, o %s venceu!" % self.mundo.items[0].objeto.nome)
+            return turno, True
+        return turno, False
+
+    def turnoGrafico(self, dimensoes, instrucoes, mundo: Mundo):
+        # limpa a tela
+        clear()
+
+        # cria a legenda
+        for item in mundo.getItens():
+            print(item.objeto.simbolo, ' => ', item.objeto.nome)
+
+        print('\n')
+
+        graficos.mostraTabuleiro(dimensoes, instrucoes)
 
 
 class Screen:
