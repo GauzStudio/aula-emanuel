@@ -107,7 +107,7 @@ def novoTurno(dimensoes, instrucoes, mundo: Mundo):
 
 
 # INICIALIZA
-mundo = Mundo(5, 5)
+mundo = Mundo(10, 10)
 mundo.adicionaObjeto(ObjetoDoMundo(Heroi('Emanuel'), 0, 0))
 mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Cid'), 2, 2))
 mundo.adicionaObjeto(ObjetoDoMundo(Bandido('El Raton'), 4, 6))

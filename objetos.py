@@ -122,7 +122,6 @@ class Mundo:
         return True
 
     def onContatoNaMesmaPosicao(self, x: int, y: int, objeto: ObjetoDoMundo):
-        # a principio só temos o heroi
         items = self.getObjetosEmPosicao(x, y)
         for item in items:
             if item.id != objeto.id:
@@ -154,7 +153,7 @@ translateKeys = {
     '4': [-1, 0],
     '5': [0, 0],
     '6': [1, 0],
-    '7': [1, -1],
+    '7': [-1, -1],
     '8': [0, -1],
     '9': [1, -1],
     'w': [0, -1],
