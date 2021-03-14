@@ -87,11 +87,11 @@ class Mundo:
         return objeto
 
     def removeObjeto(self, objeto: ObjetoDoMundo):
-        _, index = self.getItemPorId(objeto)  # type: ignore
+        _, index = self.getItem(objeto)  # type: ignore
         if index:
             self.items.pop(index)
 
-    def getItemPorId(self, objeto: ObjetoDoMundo):
+    def getItem(self, objeto: ObjetoDoMundo):
         for index, item in enumerate(self.items):
             if item.id == objeto.id:
                 return item, index
@@ -105,7 +105,7 @@ class Mundo:
         return items
 
     def moveObjeto(self, objeto: ObjetoDoMundo, x: int, y: int):
-        objetoAchado, _ = self.getItemPorId(objeto)
+        objetoAchado, _ = self.getItem(objeto)
         if objetoAchado == None:
             return False
 
