@@ -1,4 +1,7 @@
-from objetos import Bandido, Game, Heroi, Mundo, ObjetoDoMundo
+from classes.Game import Game
+from classes.Mundo import Mundo
+from classes.atores.atores import Bandido, Heroi
+from classes.ObjetoDoMundo import ObjetoDoMundo
 import sys
 
 
